@@ -31,7 +31,7 @@ export const useGetMessages = () => {
 		};
 
 		getMessages();
-	}, []);
+	}, [selectedConversation, setMessages]);
 
 	return { loading, messages };
 };
