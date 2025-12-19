@@ -1,58 +1,40 @@
 import type { RequestHandler } from 'express';
-import { getPrisma } from '../config/db.ts';
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { AppError, BadRequestError } from '../middlewares/error.middleware.ts';
+import authService from '../services/auth.service.ts';
+import {
+	validateLogIn,
+	validateSignUp,
+} from '../validation/auth.validation.ts';
 
-export const signUp: RequestHandler = async (req, res) => {
-	const { fullName, username, password, confirmPassword, gender, avatar } =
-		req.body;
+class AuthController {
+	public signUp: RequestHandler = async (req, res) => {
+		if (!validateSignUp(req.body)) {
+			throw new BadRequestError('Please fill in all the required fields');
+		}
 
-	if (
-		!fullName?.trim() ||
-		!username?.trim() ||
-		!password?.trim() ||
-		!confirmPassword?.trim() ||
-		!gender?.trim() ||
-		!avatar?.trim()
-	) {
-		res.status(400).json({
-			message: 'Please fill in all the required fields',
-		});
-		return;
-	}
+		const {
+			fullName,
+			username,
+			password,
+			confirmPassword,
+			gender,
+			avatar,
+		} = req.body;
 
-	if (password !== confirmPassword) {
-		res.status(400).json({
-			message: "Passwords don't match",
-		});
-		return;
-	}
+		if (password !== confirmPassword) {
+			throw new BadRequestError("Passwords don't match");
+		}
 
-	const prisma = getPrisma();
+		const user = await authService.signUp(
+			username,
+			password,
+			fullName,
+			gender,
+			avatar
+		);
 
-	const candidate = await prisma.user.findUnique({ where: { username } });
-	if (candidate) {
-		res.status(409).json({
-			message: 'This username is already taken',
-		});
-		return;
-	}
-
-	const salt = await bcrypt.genSalt(10);
-	const hashedPassword = await bcrypt.hash(password, salt);
-
-	try {
-		const user = await prisma.user.create({
-			data: {
-				username,
-				fullName,
-				password: hashedPassword,
-				gender,
-				avatar,
-			},
-		});
-
-		const token = generateToken(user.id);
+		const token = this.generateToken(user.id);
 
 		res.cookie('jwt', token, {
 			maxAge: 15 * 24 * 60 * 60 * 1000,
@@ -71,27 +53,49 @@ export const signUp: RequestHandler = async (req, res) => {
 				gender: user.gender,
 			},
 		});
-	} catch (err: any) {
-		res.status(500).json({ message: err?.message ?? 'Unexpected error' });
+	};
+
+	public logIn: RequestHandler = async (req, res) => {
+		if (!validateLogIn(req.body)) {
+			res.status(400).json({
+				message: 'Please fill in all the required fields',
+			});
+			return;
+		}
+
+		const { username, password } = req.body;
+
+		const user = await authService.logIn(username, password);
+
+		const token = this.generateToken(user.id);
+
+		res.cookie('jwt', token, {
+			maxAge: 15 * 24 * 60 * 60 * 1000,
+			httpOnly: true,
+			sameSite: 'strict',
+			secure: process.env.NODE_ENV !== 'development',
+		});
+
+		res.json({ message: 'Logged in successfuly' });
+	};
+
+	logOut: RequestHandler = (req, res) => {
+		res.json({ message: 'Logged out successfuly' });
+	};
+
+	private generateToken(id: string) {
+		const jwtSecret = process.env.JWT_SECRET;
+
+		if (!jwtSecret) {
+			throw new AppError('JWT_SECRET env variable is not set!');
+		}
+
+		return jwt.sign({ sub: id }, jwtSecret, {
+			expiresIn: '15d',
+		});
 	}
-};
-
-export const logIn: RequestHandler = (req, res) => {
-	res.json({ message: 'Logged in successfuly' });
-};
-
-export const logOut: RequestHandler = (req, res) => {
-	res.json({ message: 'Logged out successfuly' });
-};
-
-function generateToken(id: string) {
-	const jwtSecret = process.env.JWT_SECRET;
-
-	if (!jwtSecret) {
-		throw new Error('JWT_SECRET env variable is not set!');
-	}
-
-	return jwt.sign({ sub: id }, jwtSecret, {
-		expiresIn: '15d',
-	});
 }
+
+const authController = new AuthController();
+
+export default authController;

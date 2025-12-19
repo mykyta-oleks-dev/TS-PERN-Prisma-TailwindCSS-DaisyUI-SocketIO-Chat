@@ -1,6 +1,10 @@
 import express from 'express';
 import appRouter from './routes/index.ts';
 import dotenv from 'dotenv';
+import {
+	errorHandler,
+	notFoundHandler,
+} from './middlewares/error.middleware.ts';
 
 dotenv.config();
 
@@ -14,5 +18,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', appRouter);
+
+app.use(notFoundHandler);
+
+app.use(errorHandler);
 
 export default app;
