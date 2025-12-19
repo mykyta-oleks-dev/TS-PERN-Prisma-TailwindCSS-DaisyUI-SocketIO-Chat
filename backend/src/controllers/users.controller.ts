@@ -9,8 +9,9 @@ import {
 import type { PublicUser } from '../shared/types/user.types.ts';
 import { extractUserOrThrow } from '../shared/utils.ts';
 import { HTTP } from '../shared/constants/HTTP.ts';
+import usersService from '../services/users.service.ts';
 
-class AuthController {
+class UsersController {
 	public signUp: RequestHandler = async (req, res) => {
 		if (!validateSignUp(req.body)) {
 			throw new BadRequestError('Please fill in all the required fields');
@@ -104,6 +105,16 @@ class AuthController {
 		res.status(HTTP.NO_CONTENT).send();
 	};
 
+	public getUsers: RequestHandler = async (req, res) => {
+		const user = extractUserOrThrow(req);
+
+		const users = await usersService.getUsers(user);
+
+		res.json(users);
+	};
+
+	// Helpers
+
 	private generateToken(id: string) {
 		const jwtSecret = process.env.JWT_SECRET;
 
@@ -117,6 +128,6 @@ class AuthController {
 	}
 }
 
-const authController = new AuthController();
+const authController = new UsersController();
 
 export default authController;

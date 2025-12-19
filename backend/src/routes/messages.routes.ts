@@ -1,11 +1,10 @@
 import express from 'express';
 import messagesController from '../controllers/messages.controller.ts';
-import { protectedRoute } from '../middlewares/auth.middleware.ts';
 
 const messagesRouter = express.Router();
 
-messagesRouter.post('/send/:user_id', protectedRoute, messagesController.send);
+messagesRouter.post('/send/:user_id', messagesController.send);
 
-messagesRouter.get('/:user_id', protectedRoute, messagesController.getMessages);
+messagesRouter.get('/:user_id', messagesController.getMessages);
 
 export default messagesRouter;

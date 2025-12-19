@@ -1,5 +1,5 @@
 import express from 'express';
-import appRouter from './routes/index.ts';
+import appRouter from './routes/index.routes.ts';
 import dotenv from 'dotenv';
 import {
 	errorHandler,

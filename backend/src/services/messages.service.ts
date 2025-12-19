@@ -1,6 +1,9 @@
 import { getPrisma } from '../config/db.ts';
 import type { User } from '../generated/prisma/client.ts';
-import { NotFoundError } from '../middlewares/error.middleware.ts';
+import {
+	BadRequestError,
+	NotFoundError,
+} from '../middlewares/error.middleware.ts';
 
 class MessagesService {
 	public async send(sender: User, receiverId: string, body: string) {
@@ -51,6 +54,10 @@ class MessagesService {
 
 		if (!sender) {
 			throw new NotFoundError('Message sender not found');
+		}
+
+		if (sender.id === receiver.id) {
+			throw new BadRequestError("Can't get messages from self");
 		}
 
 		const conversation = await prisma.conversation.findFirst({
