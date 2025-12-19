@@ -10,6 +10,7 @@ const GenderCheckbox = () => {
 							type="radio"
 							className="radio border-slate-500"
 							name="gender"
+							value="male"
 						/>
 					</label>
 				</div>
@@ -20,6 +21,7 @@ const GenderCheckbox = () => {
 							type="radio"
 							className="radio border-slate-500"
 							name="gender"
+							value="female"
 						/>
 					</label>
 				</div>

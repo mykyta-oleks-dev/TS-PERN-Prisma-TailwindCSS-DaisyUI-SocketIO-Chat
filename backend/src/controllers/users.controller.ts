@@ -14,7 +14,11 @@ import usersService from '../services/users.service.ts';
 class UsersController {
 	public signUp: RequestHandler = async (req, res) => {
 		if (!validateSignUp(req.body)) {
-			throw new BadRequestError('Please fill in all the required fields');
+			console.log(req.body);
+			throw new BadRequestError(
+				'Please fill in all the required fields',
+				req.body
+			);
 		}
 
 		const {

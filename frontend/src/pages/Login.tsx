@@ -1,6 +1,9 @@
 import { Link } from 'react-router';
+import { useLogIn } from '../hooks/auth.hooks';
 
 const Login = () => {
+	const { loading, logInAction } = useLogIn();
+
 	return (
 		<div className="flex flex-col items-center justify-center min-w-96 mx-auto">
 			<div className="w-full p-6 rounded-lg shadow-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-0">
@@ -8,7 +11,7 @@ const Login = () => {
 					Login <span className="text-blue-500">ChatApp</span>
 				</h1>
 
-				<form>
+				<form action={logInAction}>
 					<div>
 						<label htmlFor="username" className="label p-2 ">
 							<span className="text-base label-text">
@@ -46,8 +49,14 @@ const Login = () => {
 					</Link>
 
 					<div>
-						<button className="btn btn-block btn-sm mt-2">
+						<button
+							className="btn btn-block btn-sm mt-2"
+							disabled={loading}
+						>
 							Login
+							{loading && (
+								<span className="loading loading-spinner loading-md"></span>
+							)}
 						</button>
 					</div>
 				</form>

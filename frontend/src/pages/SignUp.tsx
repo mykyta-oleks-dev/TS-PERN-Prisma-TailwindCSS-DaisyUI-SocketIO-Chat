@@ -1,7 +1,11 @@
 import { Link } from 'react-router';
 import GenderCheckbox from '../components/GenderCheckbox';
+import { useSignUp } from '../hooks/auth.hooks';
+import Avatar from '../components/Avatar';
 
 const SignUp = () => {
+	const { signUpAction, loading, avatar, generateAvatar } = useSignUp();
+
 	return (
 		<div className="flex flex-col items-center justify-center min-w-96 mx-auto">
 			<div className="w-full p-6 rounded-lg shadow-md bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-1">
@@ -9,7 +13,21 @@ const SignUp = () => {
 					Sign Up <span className="text-blue-500"> ChatApp</span>
 				</h1>
 
-				<form className="flex flex-col gap-3">
+				<form action={signUpAction} className="flex flex-col gap-3">
+					<div className="flex items-center w-full gap-2 space-y-2 justify-between p-2">
+						<Avatar
+							src={avatar ?? 'https://avataaars.io/'}
+							size={80}
+						/>
+						<button
+							type="button"
+							className="btn btn-md mt-2 border border-slate-700"
+							onClick={generateAvatar}
+						>
+							New Avatar
+						</button>
+					</div>
+
 					<div>
 						<label htmlFor="fullName" className="label p-2">
 							<span className="text-base label-text">
@@ -80,8 +98,14 @@ const SignUp = () => {
 					</Link>
 
 					<div>
-						<button className="btn btn-block btn-sm mt-2 border border-slate-700">
-							Sign Up
+						<button
+							className="btn btn-block btn-sm mt-2 border border-slate-700"
+							disabled={loading}
+						>
+							Sign Up{' '}
+							{loading && (
+								<span className="loading loading-spinner loading-md"></span>
+							)}
 						</button>
 					</div>
 				</form>

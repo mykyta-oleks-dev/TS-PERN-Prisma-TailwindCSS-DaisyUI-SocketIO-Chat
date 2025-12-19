@@ -1,7 +1,6 @@
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { handleError } from '../lib/utils';
 import { AuthContext, type AuthUserType } from './context';
-import { hasMessage as hasProperty } from '../lib/utils';
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	const [authUser, setAuthUser] = useState<AuthUserType | null>(null);
@@ -18,11 +17,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 				}
 				setAuthUser(data);
 			} catch (error: unknown) {
-				if (hasProperty(error, 'message')) {
-					toast.error(error.message);
-				} else {
-					toast.error('Unexpected error');
-				}
+				handleError(error);
 			} finally {
 				setIsLoading(false);
 			}
