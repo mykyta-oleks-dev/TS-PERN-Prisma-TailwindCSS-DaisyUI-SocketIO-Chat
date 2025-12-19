@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { type Conversation } from '../types/conversation.type';
 import { handleError } from '../lib/utils';
 
-const useGetConversations = () => {
+export const useGetConversations = () => {
 	const [loading, setLoading] = useState(false);
 	const [conversations, setConversations] = useState<Conversation[]>([]);
 
@@ -30,5 +30,3 @@ const useGetConversations = () => {
 
 	return { loading, conversations };
 };
-
-export default useGetConversations;

@@ -1,5 +1,5 @@
 import { useAuthContext } from '../../authContext';
-import useGetMessages from '../../hooks/messages.hooks';
+import { useGetMessages } from '../../hooks/messages.hooks';
 import type { Conversation } from '../../types/conversation.type';
 import Message from './Message';
 

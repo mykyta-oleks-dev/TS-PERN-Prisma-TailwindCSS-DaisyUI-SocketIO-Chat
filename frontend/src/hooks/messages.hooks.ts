@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useConversation from '../store/conversation.store';
 import { handleError } from '../lib/utils';
 
-const useGetMessages = () => {
+export const useGetMessages = () => {
 	const [loading, setLoading] = useState(false);
 	const { messages, setMessages, selectedConversation } = useConversation();
 
@@ -36,4 +36,49 @@ const useGetMessages = () => {
 	return { loading, messages };
 };
 
-export default useGetMessages;
+export const useSendMessage = () => {
+	const [loading, setLoading] = useState(false);
+	const { messages, setMessages, selectedConversation } = useConversation();
+
+	const sendMessageAction = async (fd: FormData) => {
+		const message = fd.get('message');
+
+		if (
+			!selectedConversation ||
+			typeof message !== 'string' ||
+			!message.trim()
+		) {
+			return;
+		}
+
+		setLoading(true);
+
+		try {
+			const res = await fetch(
+				`/api/messages/send/${selectedConversation.id}`,
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						message,
+					}),
+				}
+			);
+			const data = await res.json();
+
+			if (!res.ok) {
+				throw data;
+			}
+
+			setMessages([...messages, data]);
+		} catch (err) {
+			handleError(err);
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return { sendMessageAction, loading };
+};
