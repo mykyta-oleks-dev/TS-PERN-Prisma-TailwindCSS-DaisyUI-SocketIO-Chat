@@ -1,12 +1,7 @@
-import app from './app.ts';
+import { server } from './socket/socket.ts';
 
 const PORT = process.env.PORT ?? 3000;
 
-app.listen(PORT, (err) => {
-	if (err) {
-		console.error(err);
-		return;
-	}
-
+server.listen(PORT, () => {
 	console.log('Server is listening on port', PORT);
 });
