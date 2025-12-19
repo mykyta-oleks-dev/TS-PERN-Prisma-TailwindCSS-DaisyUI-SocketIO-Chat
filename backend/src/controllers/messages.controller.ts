@@ -22,6 +22,16 @@ class MessagesController {
 
 		res.json(message);
 	};
+
+	public getMessages: RequestHandler = async (req, res) => {
+		const receiver = extractUserOrThrow(req);
+
+		const senderId = req.params.user_id;
+
+		const messages = await messagesService.getMessages(receiver, senderId);
+
+		res.json(messages);
+	};
 }
 
 const messagesController = new MessagesController();

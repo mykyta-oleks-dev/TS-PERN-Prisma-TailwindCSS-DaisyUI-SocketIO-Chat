@@ -41,6 +41,40 @@ class MessagesService {
 
 		return message;
 	}
+
+	public async getMessages(receiver: User, senderId: string) {
+		const prisma = getPrisma();
+
+		const sender = await prisma.user.findUnique({
+			where: { id: senderId },
+		});
+
+		if (!sender) {
+			throw new NotFoundError('Message sender not found');
+		}
+
+		const conversation = await prisma.conversation.findFirst({
+			where: {
+				AND: [
+					{ participants: { some: { id: sender.id } } },
+					{ participants: { some: { id: receiver.id } } },
+				],
+			},
+			include: {
+				messages: {
+					orderBy: {
+						createdAt: 'asc',
+					},
+				},
+			},
+		});
+
+		if (!conversation) {
+			return [];
+		}
+
+		return conversation.messages;
+	}
 }
 
 const messagesService = new MessagesService();
