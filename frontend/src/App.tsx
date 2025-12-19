@@ -1,7 +1,19 @@
+import { Route, Routes } from 'react-router';
 import './App.css';
+import Home from './pages/Home';
+import SignUp from './pages/SignUp';
+import Login from './pages/Login';
 
 function App() {
-	return <h1 className="text-red-500 text-6xl">Hello world!</h1>;
+	return (
+		<div className="p-4 h-screen flex items-center justify-center">
+			<Routes>
+				<Route path="/" element={<Home />} />
+				<Route path="/signup" element={<SignUp />} />
+				<Route path="/login" element={<Login />} />
+			</Routes>
+		</div>
+	);
 }
 
 export default App;
