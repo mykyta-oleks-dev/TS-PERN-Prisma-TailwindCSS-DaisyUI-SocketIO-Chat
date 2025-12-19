@@ -18,7 +18,7 @@ export const protectedRoute: RequestHandler = async (req, _res, next) => {
 	const token = req.cookies.jwt;
 
 	if (!token) {
-		throw new UnauthorizedError('No valid token provided');
+		throw new UnauthorizedError('Not authenticated');
 	}
 
 	const decoded = jwt.verify(token, jwtSecret);
