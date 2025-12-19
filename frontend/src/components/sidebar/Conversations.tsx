@@ -1,11 +1,22 @@
-import { DUMMY_CONVERSATIONS } from "../../dummy_data/dummy";
-import Conversation from "./Conversation";
+import useGetConversations from '../../hooks/conversations.hooks';
+import Conversation from './Conversation';
 
 const Conversations = () => {
+	const { conversations, loading } = useGetConversations();
+
+	if (loading) {
+		return (
+			<span className="loading loading-spinner loading-xl mx-auto my-auto"></span>
+		);
+	}
+
 	return (
-		<div className='py-2 flex flex-col overflow-auto'>
-			{DUMMY_CONVERSATIONS.map((conversation) => (
-				<Conversation key={conversation.id} conversation={conversation} />
+		<div className="py-2 flex flex-col overflow-auto">
+			{conversations.map((conversation) => (
+				<Conversation
+					key={conversation.id}
+					conversation={conversation}
+				/>
 			))}
 		</div>
 	);

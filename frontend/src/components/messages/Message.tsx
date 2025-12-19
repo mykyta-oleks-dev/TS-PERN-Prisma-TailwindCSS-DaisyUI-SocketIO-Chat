@@ -1,20 +1,25 @@
+import type { Message as MessageObject } from '../../types/message.type';
+
 const Message = ({
 	message,
+	avatar,
+	fromMe,
 }: {
-	message: { fromMe?: boolean; body: string };
+	message: MessageObject;
+	avatar: string;
+	fromMe: boolean;
 }) => {
-	const fromMe = message.fromMe;
 	const chatClass = fromMe ? 'chat-end' : 'chat-start';
-	const img = fromMe
-		? 'https://avataaars.io/?avatarStyle=Circle&topType=LongHairCurly&accessoriesType=Prescription01&hairColor=Red&facialHairType=BeardLight&facialHairColor=Black&clotheType=CollarSweater&clotheColor=Blue03&eyeType=Cry&eyebrowType=Default&mouthType=Serious&skinColor=Black'
-		: 'https://avataaars.io/?avatarStyle=Circle&topType=Hijab&accessoriesType=Wayfarers&hatColor=Heather&clotheType=Hoodie&clotheColor=Pink&eyeType=Close&eyebrowType=Default&mouthType=Sad&skinColor=Yellow';
 
 	const bubbleBg = fromMe ? 'bg-blue-500' : '';
 	return (
 		<div className={`chat ${chatClass}`}>
 			<div className="hidden md:block chat-image avatar">
 				<div className="w-6 md:w-10 rounded-full">
-					<img alt="Tailwind CSS chat bubble component" src={img} />
+					<img
+						alt="Tailwind CSS chat bubble component"
+						src={avatar}
+					/>
 				</div>
 			</div>
 			<p
@@ -23,7 +28,12 @@ const Message = ({
 				{message.body}
 			</p>
 			<span className="chat-footer opacity-50 text-xs flex gap-1 items-center text-white">
-				22:59
+				{new Date(message.createdAt).toLocaleTimeString('en-Us', {
+					hour: '2-digit',
+					minute: '2-digit',
+					second: '2-digit',
+					hour12: false,
+				})}
 			</span>
 		</div>
 	);
