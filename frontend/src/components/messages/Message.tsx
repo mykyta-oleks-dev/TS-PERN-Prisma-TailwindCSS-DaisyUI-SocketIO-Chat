@@ -12,6 +12,8 @@ const Message = ({
 	const chatClass = fromMe ? 'chat-end' : 'chat-start';
 
 	const bubbleBg = fromMe ? 'bg-blue-500' : '';
+	const shakeClass = message.shouldShake ? 'shake' : '';
+
 	return (
 		<div className={`chat ${chatClass}`}>
 			<div className="hidden md:block chat-image avatar">
@@ -23,7 +25,7 @@ const Message = ({
 				</div>
 			</div>
 			<p
-				className={`chat-bubble text-white ${bubbleBg} text-sm md:text-md`}
+				className={`chat-bubble text-white ${bubbleBg} ${shakeClass} text-sm md:text-md`}
 			>
 				{message.body}
 			</p>

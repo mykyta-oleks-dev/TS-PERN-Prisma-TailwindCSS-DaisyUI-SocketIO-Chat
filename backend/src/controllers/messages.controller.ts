@@ -3,6 +3,7 @@ import { extractUserOrThrow } from '../shared/utils.ts';
 import { BadRequestError } from '../middlewares/error.middleware.ts';
 import { validateMessage } from '../validation/messages.validation.ts';
 import messagesService from '../services/messages.service.ts';
+import { getReceiverSocketId, io } from '../socket/socket.ts';
 
 class MessagesController {
 	public send: RequestHandler = async (req, res) => {
@@ -19,6 +20,12 @@ class MessagesController {
 			receiverId,
 			req.body.message
 		);
+
+		const receiverSocketId = getReceiverSocketId(receiverId);
+
+		if (receiverSocketId) {
+			io.to(receiverSocketId).emit('newMessage', message);
+		}
 
 		res.json(message);
 	};

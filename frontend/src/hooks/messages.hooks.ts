@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import useConversation from '../store/conversation.store';
 import { handleError } from '../lib/utils';
+import { useSocketContext } from '../socketContext';
+import type { Message } from '../types/message.type';
+
+import notificationSound from '../assets/sounds/notification.mp3';
 
 export const useGetMessages = () => {
 	const [loading, setLoading] = useState(false);
@@ -34,6 +38,30 @@ export const useGetMessages = () => {
 	}, [selectedConversation, setMessages]);
 
 	return { loading, messages };
+};
+
+export const useListenMessages = () => {
+	const { getSocket } = useSocketContext();
+	const { messages, setMessages } = useConversation();
+
+	useEffect(() => {
+		const socket = getSocket();
+
+		if (!socket) return;
+
+		socket.on('newMessage', (message: Message) => {
+			message.shouldShake = true;
+
+			const sound = new Audio(notificationSound);
+			sound.play();
+
+			setMessages([...messages, message]);
+		});
+
+		return () => {
+			socket.off('newMessage');
+		};
+	}, [getSocket, messages, setMessages]);
 };
 
 export const useSendMessage = () => {
