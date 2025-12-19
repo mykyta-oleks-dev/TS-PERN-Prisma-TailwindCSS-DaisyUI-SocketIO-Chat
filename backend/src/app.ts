@@ -5,15 +5,16 @@ import {
 	errorHandler,
 	notFoundHandler,
 } from './middlewares/error.middleware.ts';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-	console.log(process.env.DATABASE_URL);
 	res.json({ message: 'Hello World', body: req.body });
 });
 

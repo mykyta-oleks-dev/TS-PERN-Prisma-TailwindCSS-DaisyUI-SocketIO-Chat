@@ -6,6 +6,8 @@ import {
 	validateLogIn,
 	validateSignUp,
 } from '../validation/auth.validation.ts';
+import type { PublicUser } from '../shared/types/user.types.ts';
+import { extractUserOrThrow } from '../shared/utils.ts';
 
 class AuthController {
 	public signUp: RequestHandler = async (req, res) => {
@@ -43,15 +45,19 @@ class AuthController {
 			secure: process.env.NODE_ENV !== 'development',
 		});
 
+		const userReturn: PublicUser = {
+			id: user.id,
+			fullName: user.fullName,
+			username: user.username,
+			avatar: user.avatar,
+			gender: user.gender,
+			createdAt: user.createdAt,
+			updatedAt: user.updatedAt,
+		};
+
 		res.status(201).json({
 			message: 'Signed up successfuly',
-			user: {
-				id: user.id,
-				fullName: user.fullName,
-				username: user.username,
-				avatar: user.avatar,
-				gender: user.gender,
-			},
+			user: userReturn,
 		});
 	};
 
@@ -79,7 +85,17 @@ class AuthController {
 		res.json({ message: 'Logged in successfuly' });
 	};
 
+	public whoAmI: RequestHandler = async (req, res) => {
+		const user = extractUserOrThrow(req);
+
+		res.json(user);
+	};
+
 	logOut: RequestHandler = (req, res) => {
+		if (req.cookies.jwt) {
+			res.cookie('jwt', '', { expires: new Date(0) });
+		}
+
 		res.json({ message: 'Logged out successfuly' });
 	};
 
