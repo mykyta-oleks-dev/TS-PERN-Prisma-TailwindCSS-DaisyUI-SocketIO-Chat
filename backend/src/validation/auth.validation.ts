@@ -15,12 +15,14 @@ type ValidSignUpBody = ValidLogInBody & {
 const genderValues: Set<Gender> = new Set(['male', 'female']);
 
 export const validateLogIn = (body: any): body is ValidLogInBody =>
-	typeof body.username === 'string' &&
+	typeof body === 'object' &&
+	typeof body?.username === 'string' &&
 	!!body.username.trim() &&
-	typeof body.password === 'string' &&
+	typeof body?.password === 'string' &&
 	!!body.password.trim();
 
 export const validateSignUp = (body: any): body is ValidSignUpBody =>
+	typeof body === 'object' &&
 	typeof body.fullName === 'string' &&
 	!!body.fullName.trim() &&
 	typeof body.confirmPassword === 'string' &&

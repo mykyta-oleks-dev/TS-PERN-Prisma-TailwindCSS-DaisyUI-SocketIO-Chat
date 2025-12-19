@@ -1,8 +1,9 @@
 import express from 'express';
-import { conversation } from '../controllers/messages.controller.ts';
+import messagesController from '../controllers/messages.controller.ts';
+import { protectedRoute } from '../middlewares/auth.middleware.ts';
 
 const messagesRouter = express.Router();
 
-messagesRouter.all('/', conversation);
+messagesRouter.post('/send/:user_id', protectedRoute, messagesController.send);
 
 export default messagesRouter;

@@ -8,6 +8,7 @@ import {
 } from '../validation/auth.validation.ts';
 import type { PublicUser } from '../shared/types/user.types.ts';
 import { extractUserOrThrow } from '../shared/utils.ts';
+import { HTTP } from '../shared/constants/HTTP.ts';
 
 class AuthController {
 	public signUp: RequestHandler = async (req, res) => {
@@ -55,18 +56,12 @@ class AuthController {
 			updatedAt: user.updatedAt,
 		};
 
-		res.status(201).json({
-			message: 'Signed up successfuly',
-			user: userReturn,
-		});
+		res.status(201).json(userReturn);
 	};
 
 	public logIn: RequestHandler = async (req, res) => {
 		if (!validateLogIn(req.body)) {
-			res.status(400).json({
-				message: 'Please fill in all the required fields',
-			});
-			return;
+			throw new BadRequestError('Please fill in all the required fields');
 		}
 
 		const { username, password } = req.body;
@@ -82,7 +77,17 @@ class AuthController {
 			secure: process.env.NODE_ENV !== 'development',
 		});
 
-		res.json({ message: 'Logged in successfuly' });
+		const userReturn: PublicUser = {
+			id: user.id,
+			fullName: user.fullName,
+			username: user.username,
+			avatar: user.avatar,
+			gender: user.gender,
+			createdAt: user.createdAt,
+			updatedAt: user.updatedAt,
+		};
+
+		res.json(userReturn);
 	};
 
 	public whoAmI: RequestHandler = async (req, res) => {
@@ -96,7 +101,7 @@ class AuthController {
 			res.cookie('jwt', '', { expires: new Date(0) });
 		}
 
-		res.json({ message: 'Logged out successfuly' });
+		res.status(HTTP.NO_CONTENT).send();
 	};
 
 	private generateToken(id: string) {

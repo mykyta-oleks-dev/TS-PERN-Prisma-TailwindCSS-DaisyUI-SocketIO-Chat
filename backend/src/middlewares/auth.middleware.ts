@@ -29,23 +29,13 @@ export const protectedRoute: RequestHandler = async (req, _res, next) => {
 
 	const prisma = getPrisma();
 
-	const candidate = await prisma.user.findUnique({
+	const user = await prisma.user.findUnique({
 		where: { id: decoded.sub },
 	});
 
-	if (!candidate) {
+	if (!user) {
 		throw new NotFoundError('User not found');
 	}
-
-	const user: PublicUser = {
-		id: candidate.id,
-		username: candidate.username,
-		fullName: candidate.fullName,
-		avatar: candidate.avatar,
-		gender: candidate.gender,
-		createdAt: candidate.createdAt,
-		updatedAt: candidate.updatedAt,
-	};
 
 	req.user = user;
 

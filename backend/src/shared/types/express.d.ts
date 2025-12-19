@@ -1,11 +1,11 @@
 // @types/express/index.d.ts
 import * as express from 'express';
-import { PublicUser } from './user.types.ts';
+import { User } from '../../generated/prisma/client.ts';
 
 declare global {
 	namespace Express {
 		interface Request {
-			user?: PublicUser;
+			user?: User;
 		}
 	}
 }
