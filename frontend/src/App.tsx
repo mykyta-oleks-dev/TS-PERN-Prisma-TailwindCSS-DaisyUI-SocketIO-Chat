@@ -12,7 +12,7 @@ function App() {
 	if (isLoading) return null;
 
 	return (
-		<div className="p-4 h-screen flex items-center justify-center">
+		<div className="flex items-center justify-center">
 			<Routes>
 				<Route
 					path="/"

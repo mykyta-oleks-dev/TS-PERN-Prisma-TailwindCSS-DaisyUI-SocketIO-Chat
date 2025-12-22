@@ -18,7 +18,11 @@ export const useGetMessages = () => {
 
 			try {
 				const res = await fetch(
-					`/api/messages/${selectedConversation.id}`
+					import.meta.env.VITE_API_URL +
+						`/api/messages/${selectedConversation.id}`,
+					{
+						credentials: 'include',
+					}
 				);
 				const data = await res.json();
 
@@ -83,8 +87,10 @@ export const useSendMessage = () => {
 
 		try {
 			const res = await fetch(
-				`/api/messages/send/${selectedConversation.id}`,
+				import.meta.env.VITE_API_URL +
+					`/api/messages/send/${selectedConversation.id}`,
 				{
+					credentials: 'include',
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json',

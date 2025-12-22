@@ -1,12 +1,18 @@
 @import 'tailwindcss';
 @plugin "daisyui";
 
-body {
+html {
+	height: 100vh;
 	background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
 		url('/bg.png');
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;
+	background-attachment: fixed;
+}
+
+#root {
+	@apply h-screen;
 }
 
 * {

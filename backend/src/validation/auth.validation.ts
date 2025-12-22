@@ -25,27 +25,16 @@ export const validateLogIn = (body: any): body is ValidLogInBody => {
 
 export const validateSignUp = (body: any): body is ValidSignUpBody => {
 	let isValid = typeof body === 'object';
-	console.log(isValid);
 	isValid = isValid && typeof body.fullName === 'string';
-	console.log(isValid);
 	isValid = isValid && !!body.fullName.trim();
-	console.log(isValid);
 	isValid = isValid && typeof body.confirmPassword === 'string';
-	console.log(isValid);
 	isValid = isValid && !!body.confirmPassword.trim();
-	console.log(isValid);
 	isValid = isValid && typeof body.gender === 'string';
-	console.log(isValid);
 	isValid = isValid && !!body.gender.trim();
-	console.log(isValid);
 	isValid = isValid && genderValues.has(body.gender);
-	console.log(isValid);
 	isValid = isValid && typeof body.avatar === 'string';
-	console.log(isValid);
 	isValid = isValid && !!body.avatar.trim();
-	console.log(isValid);
 	isValid = isValid && validateLogIn(body);
-	console.log(isValid);
 
 	return isValid;
 };

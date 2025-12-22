@@ -1,4 +1,4 @@
-import type { RequestHandler } from 'express';
+import type { RequestHandler, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { AppError, BadRequestError } from '../middlewares/error.middleware.ts';
 import authService from '../services/auth.service.ts';
@@ -14,7 +14,6 @@ import usersService from '../services/users.service.ts';
 class UsersController {
 	public signUp: RequestHandler = async (req, res) => {
 		if (!validateSignUp(req.body)) {
-			console.log(req.body);
 			throw new BadRequestError(
 				'Please fill in all the required fields',
 				req.body
@@ -44,12 +43,7 @@ class UsersController {
 
 		const token = this.generateToken(user.id);
 
-		res.cookie('jwt', token, {
-			maxAge: 15 * 24 * 60 * 60 * 1000,
-			httpOnly: true,
-			sameSite: 'strict',
-			secure: process.env.NODE_ENV !== 'development',
-		});
+		this.setToken(res, token);
 
 		const userReturn: PublicUser = {
 			id: user.id,
@@ -75,12 +69,7 @@ class UsersController {
 
 		const token = this.generateToken(user.id);
 
-		res.cookie('jwt', token, {
-			maxAge: 15 * 24 * 60 * 60 * 1000,
-			httpOnly: true,
-			sameSite: 'strict',
-			secure: process.env.NODE_ENV !== 'development',
-		});
+		this.setToken(res, token);
 
 		const userReturn: PublicUser = {
 			id: user.id,
@@ -103,7 +92,10 @@ class UsersController {
 
 	logOut: RequestHandler = (req, res) => {
 		if (req.cookies.jwt) {
-			res.cookie('jwt', '', { expires: new Date(0) });
+			res.clearCookie('jwt', {
+				sameSite: 'none',
+				secure: true,
+			});
 		}
 
 		res.status(HTTP.NO_CONTENT).send();
@@ -128,6 +120,16 @@ class UsersController {
 
 		return jwt.sign({ sub: id }, jwtSecret, {
 			expiresIn: '15d',
+		});
+	}
+
+	private setToken(res: Response, token: string) {
+		res.cookie('jwt', token, {
+			maxAge: 15 * 24 * 60 * 60 * 1000,
+			httpOnly: true,
+			path: '/',
+			sameSite: 'none',
+			secure: true,
 		});
 	}
 }

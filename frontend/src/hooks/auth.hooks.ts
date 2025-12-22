@@ -25,20 +25,24 @@ export const useSignUp = () => {
 		const gender = fd.get('gender');
 
 		try {
-			const res = await fetch('/api/users/auth/sign-up', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					fullName,
-					username,
-					password,
-					confirmPassword,
-					gender,
-					avatar,
-				}),
-			});
+			const res = await fetch(
+				import.meta.env.VITE_API_URL + '/api/users/auth/sign-up',
+				{
+					credentials: 'include',
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						fullName,
+						username,
+						password,
+						confirmPassword,
+						gender,
+						avatar,
+					}),
+				}
+			);
 			const data = await res.json();
 
 			if (!res.ok) {
@@ -68,16 +72,20 @@ export const useLogIn = () => {
 		const password = fd.get('password');
 
 		try {
-			const res = await fetch('/api/users/auth/log-in', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					username,
-					password,
-				}),
-			});
+			const res = await fetch(
+				import.meta.env.VITE_API_URL + '/api/users/auth/log-in',
+				{
+					credentials: 'include',
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						username,
+						password,
+					}),
+				}
+			);
 			const data = await res.json();
 
 			if (!res.ok) {
@@ -102,9 +110,13 @@ export const useLogOut = () => {
 
 	const logOut = async () => {
 		try {
-			const res = await fetch('/api/users/auth/log-out', {
-				method: 'DELETE',
-			});
+			const res = await fetch(
+				import.meta.env.VITE_API_URL + '/api/users/auth/log-out',
+				{
+					credentials: 'include',
+					method: 'DELETE',
+				}
+			);
 
 			if (!res.ok) {
 				throw res;

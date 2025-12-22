@@ -10,9 +10,19 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		const fetchAuthUser = async () => {
 			try {
-				const res = await fetch('/api/users/who-am-i');
+				const res = await fetch(
+					import.meta.env.VITE_API_URL + '/api/users/who-am-i',
+					{
+						credentials: 'include',
+					}
+				);
 				const data = await res.json();
+
 				if (!res.ok) {
+					if (res.status === 401) {
+						return;
+					}
+
 					throw data;
 				}
 				setAuthUser(data);
